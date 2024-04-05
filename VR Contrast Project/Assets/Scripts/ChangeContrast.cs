@@ -23,22 +23,28 @@ public class ChangeContrast : MonoBehaviour
         // get current scrollbar value
         float contrastValue = scrollbar.value;
 
+        // checking range in case of error in scroll bar
+        // for value of 0
         if (contrastValue < 0.25f)
         {
             contrastValue = contrastOne;
         }
+        // for value of 0.25
         else if (contrastValue < 0.5f)
         {
             contrastValue = contrastTwo;
         }
+        // for value of 0.5
         else if (contrastValue < 0.75f)
         {
             contrastValue = contrastThree;
         }
+        // for value of 0.75
         else if (contrastValue < 1f)
         {
             contrastValue = contrastFour;
         }
+        // for value of 1
         else
         {
             contrastValue = contrastFive;
