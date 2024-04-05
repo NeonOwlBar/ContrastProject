@@ -6,14 +6,11 @@ using System;
 /// <summary>
 /// Change the image for the skybox
 /// </summary>
-public class SkyboxChange : MonoBehaviour
+public class ChangeSkybox : MonoBehaviour
 {
-    Material skyboxMat;
-    //Skybox skybox;
     public Material[] skyboxImages = new Material[12];
     public int imgIndex = 0;
-    private int directionInt = 0;
-    private bool isKeyDown;
+    [SerializeField] private Transform playerTransform;
 
     // Start is called before the first frame update
     void Start()
@@ -25,20 +22,12 @@ public class SkyboxChange : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            directionInt = 1;
-            isKeyDown = true;
+            ChangeSkyboxMat(1);
         }
         else if (Input.GetKeyDown(KeyCode.Q))
         {
-            directionInt = -1;
-            isKeyDown = true;
+            ChangeSkyboxMat(-1);
         }
-        if (isKeyDown)
-        {
-            ChangeSkyboxMat(directionInt);
-            isKeyDown = false;
-        }
-        
     }
 
     // load next image
@@ -46,8 +35,18 @@ public class SkyboxChange : MonoBehaviour
     {
         // change skybox image index by delta (either 1 or -1)
         imgIndex += delta;
-        // keep imgIndex within bounds of skyboxImages array
-        imgIndex = Math.Clamp(imgIndex, 0, skyboxImages.Length - 1);
+        // index wraps around as first and last are next to each other in position
+        if (imgIndex < 0) imgIndex = skyboxImages.Length - 1;
+        else if (imgIndex >= skyboxImages.Length) imgIndex = 0;
+
         RenderSettings.skybox = skyboxImages[imgIndex];
+    }
+
+    public void MoveForward()
+    {
+        // set direction by checking player direction. Player (Camera) is always at pos(0, 0, 0)
+        int direction = playerTransform.forward.z > 0 ? 1 : -1;
+
+        ChangeSkyboxMat(direction);
     }
 }

@@ -4,51 +4,49 @@ using UnityEngine;
 using UnityEngine.Rendering;
 // for volume profile components
 using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 
 public class ChangeContrast : MonoBehaviour
 {
+    public Scrollbar scrollbar;
+
     public Volume volume;
-    public float contrastOne;
-    public float contrastTwo;
-    public float contrastThree;
-    public float contrastFour;
-    public float contrastFive;
+    // preset contrast levels from lowest to highest
+    public float contrastOne;   // -75
+    public float contrastTwo;   // -40
+    public float contrastThree; // 0
+    public float contrastFour;  // 40
+    public float contrastFive;  // 75
 
-    // Start is called before the first frame update
-    void Start()
+    public void SetContrast()
     {
-    }
+        // get current scrollbar value
+        float contrastValue = scrollbar.value;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Y))
+        if (contrastValue < 0.25f)
         {
-            SetContrast(contrastOne);
+            contrastValue = contrastOne;
         }
-        else if (Input.GetKeyDown(KeyCode.U))
+        else if (contrastValue < 0.5f)
         {
-            SetContrast(contrastTwo);
+            contrastValue = contrastTwo;
         }
-        else if (Input.GetKeyDown(KeyCode.I))
+        else if (contrastValue < 0.75f)
         {
-            SetContrast(contrastThree);
+            contrastValue = contrastThree;
         }
-        else if (Input.GetKeyDown(KeyCode.O))
+        else if (contrastValue < 1f)
         {
-            SetContrast(contrastFour);
+            contrastValue = contrastFour;
         }
-        else if (Input.GetKeyDown(KeyCode.P))
+        else
         {
-            SetContrast(contrastFive);
+            contrastValue = contrastFive;
         }
-    }
 
-    private void SetContrast(float newValue)
-    {
         if (volume.profile.TryGet(out ColorAdjustments colorAdjustments))
         {
-            colorAdjustments.contrast.value = newValue;
+            colorAdjustments.contrast.value = contrastValue;
         }
     }
 }
