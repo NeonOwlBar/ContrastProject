@@ -7,9 +7,13 @@ public class AnimateHandOnInput : MonoBehaviour
 {
     public InputActionProperty pinchAnimationAction;
     public InputActionProperty gripAnimationAction;
+    public GameObject pokeObject;
     public Animator handAnimator;
     private float prevTrigger;
     private float prevGrip;
+
+    private bool triggerChanged;
+    private bool gripChanged;
 
     // Update is called once per frame
     void Update()
@@ -19,6 +23,7 @@ public class AnimateHandOnInput : MonoBehaviour
         {
             handAnimator.SetFloat("Trigger", triggerValue);
             prevTrigger = triggerValue;
+            triggerChanged = true;
         }
         //Debug.Log(triggerValue);
 
@@ -27,6 +32,24 @@ public class AnimateHandOnInput : MonoBehaviour
         {
             handAnimator.SetFloat("Grip", gripValue);
             prevGrip = gripValue;
+            gripChanged = true;
+        }
+
+        // two separate statements so only reset when necessary
+        if (triggerChanged || gripChanged)
+        {
+            if (triggerValue == 0 && gripValue == 1 && !pokeObject.activeInHierarchy)
+            {
+                pokeObject.SetActive(true);
+            }
+            else if (pokeObject.activeInHierarchy)
+            {
+                pokeObject.SetActive(false);
+            }
+
+            // reset bools
+            gripChanged = false;
+            triggerChanged = false;
         }
     }
 }
