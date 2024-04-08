@@ -42,10 +42,12 @@ public class ChangeSkybox : MonoBehaviour
         RenderSettings.skybox = skyboxImages[imgIndex];
     }
 
-    public void MoveForward()
+    public void Move(float joystickY)
     {
         // set direction by checking player direction. Player (Camera) is always at pos(0, 0, 0)
         int direction = playerTransform.forward.z > 0 ? 1 : -1;
+        // if player presses joystick backwards, reverse movement
+        if (joystickY < 0) direction *= -1;
 
         ChangeSkyboxMat(direction);
     }
