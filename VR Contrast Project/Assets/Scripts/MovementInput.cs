@@ -54,10 +54,10 @@ public class MovementInput : MonoBehaviour
     [SerializeField] private bool isMoving;
     // how far the thumbstick must be pushed in y axis to take effect
     [SerializeField] private float deadZoneY;
+    public Transform cameraTransform;
+    //used for setting arrow positions
+    bool triggerPressed = false;
 
-    private void Start()
-    {
-    }
 
     private void OnEnable()
     {
@@ -132,6 +132,28 @@ public class MovementInput : MonoBehaviour
             {
                 changeSky.Move(currentValue.y);
                 isMoving = true;
+            }
+
+            // used for setting forward and back arrow positions
+            leftHandDevices[0].TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerBool);
+            if (triggerBool)
+            {
+                if (!triggerPressed)
+                {
+                    //Vector3 angle = cameraTransform.eulerAngles;
+                    //float angleY = angle.y;
+                    //Debug.Log("Y rotation for forward movement for skybox " + changeSky.imgIndex + " = " + angleY);
+
+                    Vector3 location = cameraTransform.position + transform.TransformPoint(cameraTransform.forward * 4);
+                    Debug.Log("Position for forward arrrow for skybox " + changeSky.imgIndex + " = " + location);
+                    changeSky.forwardArrowPositions[changeSky.imgIndex] = location;
+
+                    triggerPressed = true;
+                }
+            }
+            else
+            {
+                if (triggerPressed) triggerPressed = false;
             }
         }
     }
