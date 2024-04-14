@@ -16,8 +16,7 @@ public class MovementInput : MonoBehaviour
     public Camera cameraObj;
     public Transform cameraTransform;
     //used for setting arrow positions
-    //bool triggerPressed = false;
-    bool triggerPrevFrame;
+    bool triggerPressed = false;
 
 
     private void OnEnable()
@@ -76,7 +75,6 @@ public class MovementInput : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log("FOV start of update: " + Camera.main.fieldOfView);
         // only run if a left handed device has been found
         if (leftHandDevices.Count > 0)
         {
@@ -92,51 +90,38 @@ public class MovementInput : MonoBehaviour
             // move if y value beyond either positive or negative deadzone
             else if (currentValue.y > deadZoneY || currentValue.y < -deadZoneY)
             {
-                changeSky.Move(currentValue.y);
+                if ((int)changeSky.levelNumber == 0)
+                {
+                    changeSky.Move(currentValue.y);
+                }
+                else if ((int)changeSky.levelNumber == 1)
+                {
+                    changeSky.MoveCoordinates(currentValue.y);
+                }
                 isMoving = true;
             }
 
+            // used for setting forward and back arrow positions
             leftHandDevices[0].TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerBool);
-            if (triggerBool != triggerPrevFrame)
+            if (triggerBool)
             {
-                if (triggerBool)
+                if (!triggerPressed)
                 {
-                    //set fov to 30
-                    //cameraObj.fieldOfView = 60f;
-                    Camera.main.fieldOfView = 60f;
-                    Debug.Log("FOV after change: " + Camera.main.fieldOfView + " EXPECTED 60");
+                    //Vector3 angle = cameraTransform.eulerAngles;
+                    //float angleY = angle.y;
+                    //Debug.Log("Y rotation for forward movement for skybox " + changeSky.imgIndex + " = " + angleY);
+
+                    Vector3 location = cameraTransform.position + transform.TransformPoint(cameraTransform.forward * 4);
+                    Debug.Log("Position for forward arrow for skybox " + changeSky.imgIndex + " = " + location);
+                    changeSky.tutorialForwardArrows[changeSky.imgIndex] = location;
+
+                    triggerPressed = true;
                 }
-                else
-                {
-                    // set fov to 60 (default)
-                    //cameraObj.fieldOfView = 100f;
-                    Camera.main.fieldOfView = 100f;
-                    Debug.Log("FOV after change: " + Camera.main.fieldOfView + " EXPECTED 100");
-                }
-                triggerPrevFrame = triggerBool;
             }
-
-            //// used for setting forward and back arrow positions
-            //leftHandDevices[0].TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerBool);
-            //if (triggerBool)
-            //{
-            //    if (!triggerPressed)
-            //    {
-            //        //Vector3 angle = cameraTransform.eulerAngles;
-            //        //float angleY = angle.y;
-            //        //Debug.Log("Y rotation for forward movement for skybox " + changeSky.imgIndex + " = " + angleY);
-
-            //        Vector3 location = cameraTransform.position + transform.TransformPoint(cameraTransform.forward * 4);
-            //        Debug.Log("Position for forward arrow for skybox " + changeSky.imgIndex + " = " + location);
-            //        changeSky.tutorialForwardArrows[changeSky.imgIndex] = location;
-
-            //        triggerPressed = true;
-            //    }
-            //}
-            //else
-            //{
-            //    if (triggerPressed) triggerPressed = false;
-            //}
+            else
+            {
+                if (triggerPressed) triggerPressed = false;
+            }
         }
     }
 }
