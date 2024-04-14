@@ -5,47 +5,6 @@ using UnityEngine.XR;
 
 public class MovementInput : MonoBehaviour
 {
-    //// store left handed controller
-    //List<UnityEngine.XR.InputDevice> lefthandedControllers = new();
-
-    //// used to find the left controller
-    //InputDeviceCharacteristics desiredCharacteristics = InputDeviceCharacteristics.HeldInHand
-    //                                                    | InputDeviceCharacteristics.Left
-    //                                                    | InputDeviceCharacteristics.Controller;
-
-    //public InputActionProperty leftThumbstick;
-
-    //public ChangeSkybox changeSky;
-
-    //// Start is called before the first frame update
-    //void Start()
-    //{
-    //    InputDevices.GetDevicesWithCharacteristics(desiredCharacteristics, lefthandedControllers);
-    //    foreach (var device in lefthandedControllers)
-    //    {
-    //        Debug.Log(string.Format("Device found with name '{0}' and role '{1}'", device.name, device.characteristics.ToString()));
-    //    }
-    //}
-    //private void OnEnable()
-    //{
-    //    InputDevices.GetDevicesWithCharacteristics(desiredCharacteristics, lefthandedControllers);
-    //}
-
-    //// Update is called once per frame
-    //void Update()
-    //{
-    //    //InputDevices.GetDevicesWithCharacteristics(desiredCharacteristics, lefthandedControllers);
-    //    //if (lefthandedControllers.Count > 0)
-    //    //{
-    //    //    Debug.Log("Devices found: " + lefthandedControllers.Count);
-    //    //}
-    //    //else
-    //    //{
-    //    //    Debug.Log("No devices found");
-    //    //}
-
-    //}
-
     // reference to class for changing skybox
     public ChangeSkybox changeSky;
     // holds all left handed devices, hopefully only one
@@ -54,9 +13,11 @@ public class MovementInput : MonoBehaviour
     [SerializeField] private bool isMoving;
     // how far the thumbstick must be pushed in y axis to take effect
     [SerializeField] private float deadZoneY;
+    public Camera cameraObj;
     public Transform cameraTransform;
     //used for setting arrow positions
-    bool triggerPressed = false;
+    //bool triggerPressed = false;
+    bool triggerPrevFrame;
 
 
     private void OnEnable()
@@ -115,6 +76,7 @@ public class MovementInput : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log("FOV start of update: " + Camera.main.fieldOfView);
         // only run if a left handed device has been found
         if (leftHandDevices.Count > 0)
         {
@@ -134,27 +96,47 @@ public class MovementInput : MonoBehaviour
                 isMoving = true;
             }
 
-            // used for setting forward and back arrow positions
             leftHandDevices[0].TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerBool);
-            if (triggerBool)
+            if (triggerBool != triggerPrevFrame)
             {
-                if (!triggerPressed)
+                if (triggerBool)
                 {
-                    //Vector3 angle = cameraTransform.eulerAngles;
-                    //float angleY = angle.y;
-                    //Debug.Log("Y rotation for forward movement for skybox " + changeSky.imgIndex + " = " + angleY);
-
-                    Vector3 location = cameraTransform.position + transform.TransformPoint(cameraTransform.forward * 4);
-                    Debug.Log("Position for forward arrrow for skybox " + changeSky.imgIndex + " = " + location);
-                    changeSky.forwardArrowPositions[changeSky.imgIndex] = location;
-
-                    triggerPressed = true;
+                    //set fov to 30
+                    //cameraObj.fieldOfView = 60f;
+                    Camera.main.fieldOfView = 60f;
+                    Debug.Log("FOV after change: " + Camera.main.fieldOfView + " EXPECTED 60");
                 }
+                else
+                {
+                    // set fov to 60 (default)
+                    //cameraObj.fieldOfView = 100f;
+                    Camera.main.fieldOfView = 100f;
+                    Debug.Log("FOV after change: " + Camera.main.fieldOfView + " EXPECTED 100");
+                }
+                triggerPrevFrame = triggerBool;
             }
-            else
-            {
-                if (triggerPressed) triggerPressed = false;
-            }
+
+            //// used for setting forward and back arrow positions
+            //leftHandDevices[0].TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerBool);
+            //if (triggerBool)
+            //{
+            //    if (!triggerPressed)
+            //    {
+            //        //Vector3 angle = cameraTransform.eulerAngles;
+            //        //float angleY = angle.y;
+            //        //Debug.Log("Y rotation for forward movement for skybox " + changeSky.imgIndex + " = " + angleY);
+
+            //        Vector3 location = cameraTransform.position + transform.TransformPoint(cameraTransform.forward * 4);
+            //        Debug.Log("Position for forward arrow for skybox " + changeSky.imgIndex + " = " + location);
+            //        changeSky.tutorialForwardArrows[changeSky.imgIndex] = location;
+
+            //        triggerPressed = true;
+            //    }
+            //}
+            //else
+            //{
+            //    if (triggerPressed) triggerPressed = false;
+            //}
         }
     }
 }
