@@ -12,8 +12,9 @@ public class AnimateHandOnInput : MonoBehaviour
     private float prevTrigger;
     private float prevGrip;
 
-    private bool triggerChanged;
-    private bool gripChanged;
+    // used when allowing UI interaction on point animation only
+    //private bool triggerChanged;
+    //private bool gripChanged;
 
     // Update is called once per frame
     void Update()
@@ -23,7 +24,7 @@ public class AnimateHandOnInput : MonoBehaviour
         {
             handAnimator.SetFloat("Trigger", triggerValue);
             prevTrigger = triggerValue;
-            triggerChanged = true;
+            //triggerChanged = true;
         }
         //Debug.Log(triggerValue);
 
@@ -32,24 +33,24 @@ public class AnimateHandOnInput : MonoBehaviour
         {
             handAnimator.SetFloat("Grip", gripValue);
             prevGrip = gripValue;
-            gripChanged = true;
+            //gripChanged = true;
         }
 
         // two separate statements so only reset when necessary
-        if (triggerChanged || gripChanged)
-        {
-            if (triggerValue == 0 && gripValue == 1 && !pokeObject.activeInHierarchy)
-            {
-                pokeObject.SetActive(true);
-            }
-            else if (pokeObject.activeInHierarchy)
-            {
-                pokeObject.SetActive(false);
-            }
+        //if (triggerChanged || gripChanged)
+        //{
+        //    if (triggerValue == 0 && gripValue == 1 && !pokeObject.activeInHierarchy)
+        //    {
+        //        pokeObject.SetActive(true);
+        //    }
+        //    else if (pokeObject.activeInHierarchy)
+        //    {
+        //        pokeObject.SetActive(false);
+        //    }
 
-            // reset bools
-            gripChanged = false;
-            triggerChanged = false;
-        }
+        //    // reset bools
+        //    gripChanged = false;
+        //    triggerChanged = false;
+        //}
     }
 }

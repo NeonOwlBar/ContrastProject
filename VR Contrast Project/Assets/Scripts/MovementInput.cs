@@ -15,8 +15,8 @@ public class MovementInput : MonoBehaviour
     [SerializeField] private float deadZoneY;
     public Camera cameraObj;
     public Transform cameraTransform;
-    //used for setting arrow positions
-    bool triggerPressed = false;
+    //used for setting arrow positions during development
+    //bool triggerPressed = false;
 
 
     private void OnEnable()
@@ -73,55 +73,89 @@ public class MovementInput : MonoBehaviour
     }
 
 
-    private void Update()
+    //private void Update()
+    //{
+    //    // only run if a left handed device has been found
+    //    if (leftHandDevices.Count > 0)
+    //    {
+    //        // assigns X and Y thumbstick values to currentValue
+    //        leftHandDevices[0].TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 currentValue);
+
+    //        if (isMoving)
+    //        {
+    //            // allow to move again if thumbstick moved back to between positive and negative deadzones
+    //            if (currentValue.y < deadZoneY && currentValue.y > -deadZoneY) 
+    //                isMoving = false;
+    //        }
+    //        // move if y value beyond either positive or negative deadzone
+    //        else if (currentValue.y > deadZoneY || currentValue.y < -deadZoneY)
+    //        {
+    //            //if (changeSky.levelNumber == ChangeSkybox.LevelEnum.Tutorial)
+    //            //{
+    //            //    changeSky.Move(currentValue.y);
+    //            //}
+    //            //else if (changeSky.levelNumber == ChangeSkybox.LevelEnum.One)
+    //            //{
+    //            //    changeSky.MoveCoordinates(currentValue.y);
+    //            //}
+    //            changeSky.Move(currentValue.y);
+    //            isMoving = true;
+    //        }
+
+    //        //// used for setting forward and back arrow positions
+    //        //leftHandDevices[0].TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerBool);
+    //        //if (triggerBool)
+    //        //{
+    //        //    if (!triggerPressed)
+    //        //    {
+    //        //        //Vector3 angle = cameraTransform.eulerAngles;
+    //        //        //float angleY = angle.y;
+    //        //        //Debug.Log("Y rotation for forward movement for skybox " + changeSky.imgIndex + " = " + angleY);
+
+    //        //        //Vector3 location = cameraTransform.position + transform.TransformPoint(cameraTransform.forward * 4);
+    //        //        //Debug.Log("Position for forward arrow for skybox " + changeSky.imgIndex + " = " + location);
+    //        //        //changeSky.tutorialForwardArrows[changeSky.imgIndex] = location;
+
+    //        //        //triggerPressed = true;
+    //        //    }
+    //        //}
+    //        //else
+    //        //{
+    //        //    if (triggerPressed) triggerPressed = false;
+    //        //}
+    //    }
+    //}
+
+    public void OnPressA()    // north
     {
-        // only run if a left handed device has been found
-        if (leftHandDevices.Count > 0)
+        switch (changeSky.levelNumber)
         {
-            // assigns X and Y thumbstick values to currentValue
-            leftHandDevices[0].TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 currentValue);
-
-            if (isMoving)
-            {
-                // allow to move again if thumbstick moved back to between positive and negative deadzones
-                if (currentValue.y < deadZoneY && currentValue.y > -deadZoneY) 
-                    isMoving = false;
-            }
-            // move if y value beyond either positive or negative deadzone
-            else if (currentValue.y > deadZoneY || currentValue.y < -deadZoneY)
-            {
-                if ((int)changeSky.levelNumber == 0)
-                {
-                    changeSky.Move(currentValue.y);
-                }
-                else if ((int)changeSky.levelNumber == 1)
-                {
-                    changeSky.MoveCoordinates(currentValue.y);
-                }
-                isMoving = true;
-            }
-
-            // used for setting forward and back arrow positions
-            leftHandDevices[0].TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerBool);
-            if (triggerBool)
-            {
-                if (!triggerPressed)
-                {
-                    //Vector3 angle = cameraTransform.eulerAngles;
-                    //float angleY = angle.y;
-                    //Debug.Log("Y rotation for forward movement for skybox " + changeSky.imgIndex + " = " + angleY);
-
-                    Vector3 location = cameraTransform.position + transform.TransformPoint(cameraTransform.forward * 4);
-                    Debug.Log("Position for forward arrow for skybox " + changeSky.imgIndex + " = " + location);
-                    changeSky.tutorialForwardArrows[changeSky.imgIndex] = location;
-
-                    triggerPressed = true;
-                }
-            }
-            else
-            {
-                if (triggerPressed) triggerPressed = false;
-            }
+            case ChangeSkybox.LevelEnum.Tutorial:
+                changeSky.ChangeSkyboxTutorial(1);
+                break;
+            case ChangeSkybox.LevelEnum.One:
+                changeSky.ChangeSkyboxLevelOne(0, -1);
+                break;
         }
+    }
+    public void OnPressB()    // east
+    {
+        switch (changeSky.levelNumber)
+        {
+            case ChangeSkybox.LevelEnum.Tutorial:
+                changeSky.ChangeSkyboxTutorial(-1);
+                break;
+            case ChangeSkybox.LevelEnum.One:
+                changeSky.ChangeSkyboxLevelOne(1, 0);
+                break;
+        }
+    }
+    public void OnPressC()    // south
+    {
+        changeSky.ChangeSkyboxLevelOne(0, 1);
+    }
+    public void OnPressD()    // west
+    {
+        changeSky.ChangeSkyboxLevelOne(-1, 0);
     }
 }

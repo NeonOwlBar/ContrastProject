@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UIElements;
 
 /// <summary>
 /// Change the image for the skybox
@@ -9,41 +10,67 @@ using System;
 public class ChangeSkybox : MonoBehaviour
 {
     // tutorial level info
+    [Header("Tutorial --------")]
+    // current index in array
+    public int imgIndex = 0;
+    // reference to player
+    public Transform playerTransform;
+    public ArrowCollider arrowForward;
+    public ArrowCollider arrowBackward;
+    private List<ArrowCollider> arrows = new List<ArrowCollider>();
+    
+    public float dotProductTarget;
+    [Header("UI")]
+    public GameObject tutorialHandUI;
+    public GameObject checkProceedUI;
+    [Header("Array of Map")]
     public Material[] tutorialImages = new Material[30];
+    [Header("Positions of forward arrows")]
     public Vector3[] tutorialForwardArrows = new Vector3[30];
+    [Header("Positions of backward arrows")]
     public Vector3[] tutorialBackwardArrows = new Vector3[30];
 
+
     // level one info
+    [Header("Level One --------")]
+    [Header("UI")]
+    public GameObject levelOneHandUI;
+    // holds current coordinate in each axis
+    [Header("Co-ordinates")]
+    public int xIndex = 0;
+    public int yIndex = 0;
+    [Header("Array Dimensions")]
+    // array dimensions
     public const int levelOneX = 6;
     public const int levelOneY = 11;
+    
+    [Header("Top-Down Map")] // 2D array acts as top down grid of map
     public Material[,] levelOneImages = new Material[levelOneX, levelOneY];
+    [Header("Map columns")] // each one-dimensional array holds data for each column in 2D array
     public Material[] levelOneXZeroImages = new Material[levelOneY];
     public Material[] levelOneXOneImages = new Material[levelOneY];
     public Material[] levelOneXTwoImages = new Material[levelOneY];
     public Material[] levelOneXThreeImages = new Material[levelOneY];
     public Material[] levelOneXFourImages = new Material[levelOneY];
     public Material[] levelOneXFiveImages = new Material[levelOneY];
-    public Vector3[,] levelOneLocalNorth = new Vector3[levelOneX, levelOneY];
-    public int xIndex = 0;
-    public int yIndex = 0;
-
-    // level two info
-    public Material[] levelTwoImages = new Material[30];
-
-
-    public int imgIndex = 0;
-    /*[SerializeField] */public Transform playerTransform;
-    public ArrowCollider arrowForward;
-    public ArrowCollider arrowBackward;
-    public float dotProductTarget;
 
     public LevelEnum levelNumber;
+
+    public GameObject pathNorth;
+    public GameObject buttonNorth;
+    public GameObject pathEast;
+    public GameObject buttonEast;
+    public GameObject pathSouth;
+    public GameObject buttonSouth;
+    public GameObject pathWest;
+    public GameObject buttonWest;
+
+    private List<GameObject> pathUI = new();
 
     public enum LevelEnum
     {
         Tutorial,
-        One,
-        Two
+        One
     }
 
     // Start is called before the first frame update
@@ -51,63 +78,66 @@ public class ChangeSkybox : MonoBehaviour
     {
         // ensure arrays have skybox data
         PopulateLevelArrays();
+        // populate lists with path indicator UI
+        arrows = new List<ArrowCollider> { arrowForward, arrowBackward };
+        pathUI = new List<GameObject> { pathNorth, pathEast, pathSouth, pathWest };
 
         // ensure start using correct skybox
         switch ((int)levelNumber)
         {
-            case 0: 
-                RenderSettings.skybox = tutorialImages[imgIndex];
-                break;
-            case 1:
-                RenderSettings.skybox = levelOneImages[0, 0];
-                break;
-        }
-    }
-
-    private void Update()
-    {
-        switch((int)levelNumber)
-        {
             case 0:
-                TutorialUpdate();
+                SetLevelTutorial();
                 break;
             case 1:
-                LevelOneUpdate();
+                SetLevelOne();
                 break;
         }
     }
 
-    private void TutorialUpdate()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            ChangeSkyboxTutorial(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.Q))
-        {
-            ChangeSkyboxTutorial(-1);
-        }
-    }
+    //private void Update()
+    //{
+    //    switch((int)levelNumber)
+    //    {
+    //        case 0:
+    //            TutorialUpdate();
+    //            break;
+    //        case 1:
+    //            LevelOneUpdate();
+    //            break;
+    //    }
+    //}
 
-    private void LevelOneUpdate()
-    {
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            ChangeSkyboxLevelOne(1, 0);
-        }
-        else if (Input.GetKeyDown(KeyCode.C))
-        {
-            ChangeSkyboxLevelOne(-1, 0);
-        }
-        else if (Input.GetKeyDown(KeyCode.Y))
-        {
-            ChangeSkyboxLevelOne(0, 1);
-        }
-        else if (Input.GetKeyDown(KeyCode.I))
-        {
-            ChangeSkyboxLevelOne(0, -1);
-        }
-    }
+    //private void TutorialUpdate()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.E))
+    //    {
+    //        ChangeSkyboxTutorial(1);
+    //    }
+    //    else if (Input.GetKeyDown(KeyCode.Q))
+    //    {
+    //        ChangeSkyboxTutorial(-1);
+    //    }
+    //}
+
+    //private void LevelOneUpdate()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.X))
+    //    {
+    //        ChangeSkyboxLevelOne(1, 0);
+    //    }
+    //    else if (Input.GetKeyDown(KeyCode.C))
+    //    {
+    //        ChangeSkyboxLevelOne(-1, 0);
+    //    }
+    //    else if (Input.GetKeyDown(KeyCode.Y))
+    //    {
+    //        ChangeSkyboxLevelOne(0, 1);
+    //    }
+    //    else if (Input.GetKeyDown(KeyCode.I))
+    //    {
+    //        ChangeSkyboxLevelOne(0, -1);
+    //    }
+    //}
 
     // load next image
     public void ChangeSkyboxTutorial(int delta)
@@ -120,8 +150,26 @@ public class ChangeSkybox : MonoBehaviour
 
         RenderSettings.skybox = tutorialImages[imgIndex];
 
-        arrowForward.ChangePosition(tutorialForwardArrows[imgIndex]);
-        arrowBackward.ChangePosition(tutorialBackwardArrows[imgIndex]);
+        arrowForward.transform.position = tutorialForwardArrows[imgIndex] * 50;
+        Vector3 forPos = arrowForward.transform.position;
+        arrowForward.transform.position = new Vector3(forPos.x, -100f, forPos.z);
+        arrowBackward.transform.position = tutorialBackwardArrows[imgIndex] * 50;
+        Vector3 backPos = arrowBackward.transform.position;
+        arrowBackward.transform.position = new Vector3(backPos.x, -100f, backPos.z);
+
+        PathUIFacePlayer(arrowForward.transform);
+        PathUIFacePlayer(arrowBackward.transform);
+    }
+
+    private void PathUIFacePlayer(Transform UITransform)
+    {
+        Vector3 worldPlayerPos = transform.TransformPoint(playerTransform.position);
+        // so that UI parent will look at y = -100, rotation to look upwards applied to UI as a child
+        worldPlayerPos.y = -100f;
+        Vector3 worldUIPos = transform.TransformPoint(UITransform.position);
+        Vector3 forwardDirection = (worldUIPos - worldPlayerPos);
+        Quaternion forwardRotation = Quaternion.LookRotation(forwardDirection);
+        UITransform.rotation = forwardRotation;
     }
 
     public void Move(float joystickY)
@@ -132,12 +180,14 @@ public class ChangeSkybox : MonoBehaviour
         // cache player's position and direction vectors
         Vector3 playerPos = transform.TransformPoint(playerTransform.position);
         Vector3 playerForward = transform.TransformPoint(playerTransform.forward);
-        Vector3 playerVector = (playerForward - playerPos).normalized;
+        //Vector3 playerVector = (playerForward - playerPos).normalized;
+        //Debug.Log("vector from player to player forward = " + playerVector);
         // y value doesn't need to be compared,
         // so set y components to zero
         // all arrow position y components are zero already
         playerPos.y = 0;
         playerForward.y = 0;
+        Vector3 playerVector = (playerForward - playerPos).normalized;
         playerVector.y = 0;
         
         // calculate normalised vectors from player to arrows
@@ -157,6 +207,8 @@ public class ChangeSkybox : MonoBehaviour
             direction = -1;
         }
 
+        Debug.Log("Direction = " + direction);
+
         // if dot product target met
         if (direction != 0)
         {
@@ -167,7 +219,7 @@ public class ChangeSkybox : MonoBehaviour
         }
     }
 
-    private void ChangeSkyboxLevelOne(int x, int y)
+    public void ChangeSkyboxLevelOne(int x, int y)
     {
         // check new values are within array bounds
         int newX = xIndex + x;
@@ -180,7 +232,15 @@ public class ChangeSkybox : MonoBehaviour
             xIndex = newX;
             yIndex = newY;
             RenderSettings.skybox = levelOneImages[newX, newY];
+            // set path indicator positions for new skybox
+            PathPositions();
         }
+
+        // write JSON code to file
+        // * current time elapsed
+        // * skybox ID or xy coordinate
+        // * time spent at last scene
+
     }
 
     public void MoveCoordinates(float joystickY)
@@ -226,9 +286,6 @@ public class ChangeSkybox : MonoBehaviour
             case 1:
                 SetLevelOne();
                 break;
-            case 2:
-                SetLevelTwo();
-                break;
             default:
                 Debug.LogError("Could not set new level");
                 break;
@@ -238,15 +295,153 @@ public class ChangeSkybox : MonoBehaviour
     public void SetLevelTutorial()
     {
         levelNumber = LevelEnum.Tutorial;
+        
+        RenderSettings.skybox = tutorialImages[imgIndex];
+        ChangeSkyboxTutorial(0);
+
+        tutorialHandUI.SetActive(true);
+        checkProceedUI.SetActive(false);
+        levelOneHandUI.SetActive(false);
+
+        foreach (ArrowCollider arrow in arrows) arrow.gameObject.SetActive(true);
+        foreach (GameObject obj in pathUI) obj.SetActive(false);
     }
 
     public void SetLevelOne()
     {
         levelNumber = LevelEnum.One;
-    }
-    public void SetLevelTwo()
-    {
-        levelNumber = LevelEnum.Two;
+        // set skybox to use level one skybox
+        RenderSettings.skybox = levelOneImages[xIndex, yIndex];
+        // remove tutorial UI
+        tutorialHandUI.SetActive(false);
+        // activate level one UI
+        levelOneHandUI.SetActive(true);
+        // remove all path indicators for tutorial level
+        foreach (ArrowCollider arrow in arrows) arrow.gameObject.SetActive(false);
+        // add all path indicators for level one
+        //foreach (GameObject obj in pathUI) obj.SetActive(true);
+        
+        // set correct path indicators for spawn position
+        PathPositions();
     }
 
+    public void PathPositions()
+    {
+        // north available
+        if (yIndex - 1 >= 0)
+        {
+            if (levelOneImages[xIndex, yIndex - 1] == null) SetNorthObjects(false);
+            else SetNorthObjects(true);
+        }
+        else SetNorthObjects(false);
+
+        // east available
+        if (xIndex + 1 < levelOneX)
+        {
+            if (levelOneImages[xIndex + 1, yIndex] == null) SetEastObjects(false);
+            else SetEastObjects(true);
+        }
+        else SetEastObjects(false);
+
+        // south available
+        if (yIndex + 1 < levelOneY)
+        {
+            if (levelOneImages[xIndex, yIndex + 1] == null) SetSouthObjects(false);
+            else SetSouthObjects(true);
+        }
+        else SetSouthObjects(false);
+
+        // west available
+        if (xIndex - 1 >= 0)
+        {
+            if (levelOneImages[xIndex - 1, yIndex] == null) SetWestObjects(false);
+            else SetWestObjects(true);
+        }
+        else SetWestObjects(false);
+
+
+
+
+        //bool needsDiagonalToEast = (xIndex == 2 && yIndex == 4);
+        //bool needsDiagonalToWest = (xIndex == 3 && yIndex == 5);
+
+        //// north available
+        //if (yIndex - 1 >= 0)
+        //{
+        //    if (levelOneImages[xIndex, yIndex - 1] == null) SetNorthObjects(false);
+        //    else SetNorthObjects(true);
+        //}
+        //else SetNorthObjects(false);
+
+        //if (needsDiagonalToEast)
+        //{
+        //    // east available
+        //    if (xIndex + 1 < levelOneX)
+        //    {
+        //        if (levelOneImages[xIndex + 1, yIndex + 1] == null) SetEastObjects(false);
+        //        else SetEastObjects(true);
+        //    }
+        //    else SetEastObjects(false);
+        //}
+        //else
+        //{
+        //    // east available
+        //    if (xIndex + 1 < levelOneX)
+        //    {
+        //        if (levelOneImages[xIndex + 1, yIndex] == null) SetEastObjects(false);
+        //        else SetEastObjects(true);
+        //    }
+        //    else SetEastObjects(false);
+        //}
+        //// south available
+        //if (yIndex + 1 < levelOneY)
+        //{
+        //    if (levelOneImages[xIndex, yIndex + 1] == null) SetSouthObjects(false);
+        //    else SetSouthObjects(true);
+        //}
+        //else SetSouthObjects(false);
+
+        //if (needsDiagonalToWest)
+        //{
+        //    // west available
+        //    if (xIndex - 1 >= 0)
+        //    {
+        //        if (levelOneImages[xIndex - 1, yIndex - 1] == null) SetWestObjects(false);
+        //        else SetWestObjects(true);
+        //    }
+        //    else SetWestObjects(false);
+        //}
+        //else
+        //{
+        //    // west available
+        //    if (xIndex - 1 >= 0)
+        //    {
+        //        if (levelOneImages[xIndex - 1, yIndex] == null) SetWestObjects(false);
+        //        else SetWestObjects(true);
+        //    }
+        //    else SetWestObjects(false);
+        //}
+    }
+
+    // set path canvas and UI buttons to true or false
+    private void SetNorthObjects(bool value)
+    {
+        pathNorth.SetActive(value);
+        buttonNorth.SetActive(value);
+    }
+    private void SetEastObjects(bool value)
+    {
+        pathEast.SetActive(value);
+        buttonEast.SetActive(value);
+    }
+    private void SetSouthObjects(bool value)
+    {
+        pathSouth.SetActive(value);
+        buttonSouth.SetActive(value);
+    }
+    private void SetWestObjects(bool value)
+    {
+        pathWest.SetActive(value);
+        buttonWest.SetActive(value);
+    }
 }
