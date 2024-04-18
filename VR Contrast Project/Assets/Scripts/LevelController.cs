@@ -10,6 +10,8 @@ public class LevelController : MonoBehaviour
 
     public ChangeSkybox skybox;
 
+    public SaveData saveData;
+
     public void TutorialToProceed()
     {
         tutorialUI.SetActive(false);
@@ -33,5 +35,6 @@ public class LevelController : MonoBehaviour
     {
         // save all data to JSON
         Debug.Log("LevelOneToEnd() called");
+        saveData.PrintSaveData();
     }
 }

@@ -9,6 +9,12 @@ using UnityEngine.UIElements;
 /// </summary>
 public class ChangeSkybox : MonoBehaviour
 {
+    [Header("General --------")]
+    public LevelEnum levelNumber;
+    public float totalTimer;
+    public float lastMoveTime = 0f;
+    public int totalMoves = 0;
+
     // tutorial level info
     [Header("Tutorial --------")]
     // current index in array
@@ -53,9 +59,7 @@ public class ChangeSkybox : MonoBehaviour
     public Material[] levelOneXThreeImages = new Material[levelOneY];
     public Material[] levelOneXFourImages = new Material[levelOneY];
     public Material[] levelOneXFiveImages = new Material[levelOneY];
-
-    public LevelEnum levelNumber;
-
+    [Header("Path indicators")]
     public GameObject pathNorth;
     public GameObject buttonNorth;
     public GameObject pathEast;
@@ -94,18 +98,15 @@ public class ChangeSkybox : MonoBehaviour
         }
     }
 
-    //private void Update()
-    //{
-    //    switch((int)levelNumber)
-    //    {
-    //        case 0:
-    //            TutorialUpdate();
-    //            break;
-    //        case 1:
-    //            LevelOneUpdate();
-    //            break;
-    //    }
-    //}
+    private void Update()
+    {
+        switch ((int)levelNumber)
+        {
+            case 1:
+                totalTimer += Time.deltaTime;
+                break;
+        }
+    }
 
     //private void TutorialUpdate()
     //{
@@ -229,9 +230,22 @@ public class ChangeSkybox : MonoBehaviour
         // only proceed if a skybox exists at the new coordinate
         if (levelOneImages[newX, newY] != null)
         {
+            // FOR DATA COLLECTION
+            // how long since last move?
+            float timeSpent = totalTimer - lastMoveTime;
+            // create new save data for this move
+            SaveData.CreateSaveData(timeSpent, totalTimer, new Vector2Int(xIndex, yIndex), new Vector2Int(newX, newY), totalMoves);
+            // update last time moved at
+            lastMoveTime = totalTimer;
+            // moved, so increment value
+            totalMoves++;
+
+            // FOR VISUALS
+            // update coordinates
             xIndex = newX;
             yIndex = newY;
-            RenderSettings.skybox = levelOneImages[newX, newY];
+            // update skybox
+            RenderSettings.skybox = levelOneImages[xIndex, yIndex];
             // set path indicator positions for new skybox
             PathPositions();
         }
@@ -242,12 +256,6 @@ public class ChangeSkybox : MonoBehaviour
         // * time spent at last scene
 
     }
-
-    public void MoveCoordinates(float joystickY)
-    {
-        
-    }
-
 
     private void PopulateLevelArrays()
     {
@@ -318,8 +326,6 @@ public class ChangeSkybox : MonoBehaviour
         levelOneHandUI.SetActive(true);
         // remove all path indicators for tutorial level
         foreach (ArrowCollider arrow in arrows) arrow.gameObject.SetActive(false);
-        // add all path indicators for level one
-        //foreach (GameObject obj in pathUI) obj.SetActive(true);
         
         // set correct path indicators for spawn position
         PathPositions();

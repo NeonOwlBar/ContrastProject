@@ -126,7 +126,7 @@ public class MovementInput : MonoBehaviour
     //    }
     //}
 
-    public void OnPressA()    // north
+    public void OnPressA()    // north for research, clockwise for tutorial
     {
         switch (changeSky.levelNumber)
         {
@@ -138,7 +138,7 @@ public class MovementInput : MonoBehaviour
                 break;
         }
     }
-    public void OnPressB()    // east
+    public void OnPressB()    // east for research, anti-clockwise for tutorial
     {
         switch (changeSky.levelNumber)
         {
@@ -150,6 +150,8 @@ public class MovementInput : MonoBehaviour
                 break;
         }
     }
+
+    // C and D buttons only present in research level, so don't need switch statement
     public void OnPressC()    // south
     {
         changeSky.ChangeSkyboxLevelOne(0, 1);
