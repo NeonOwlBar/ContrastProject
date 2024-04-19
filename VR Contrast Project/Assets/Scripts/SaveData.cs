@@ -2,19 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using TMPro;
 
 public class SaveData : MonoBehaviour
 {
     public static List<MoveData> movementData = new();
+    private bool isDataSaved = false;
 
-    public GameObject dataPanel;
-    public TextMeshProUGUI jsonDataTextBox;
+    public GameObject levelOneUI;
+    public GameObject dataSavedUI;
 
     // Start is called before the first frame update
     void Start()
     {
-        dataPanel.SetActive(false);
+        Debug.Log(Application.persistentDataPath);
+        dataSavedUI.SetActive(false);
+
+        isDataSaved = false;
     }
 
     //// Update is called once per frame
@@ -35,9 +38,29 @@ public class SaveData : MonoBehaviour
 
     public void PrintSaveData()
     {
-        dataPanel.SetActive(true);
-        string jsonData = JsonUtility.ToJson(movementData);
-        jsonDataTextBox.text = jsonData;
-        Debug.Log("movementData = " + jsonData);
+        // only save data if not yet saved
+        if (!isDataSaved)
+        {
+            string path = Application.persistentDataPath + "/researchData.txt";
+            StreamWriter writer = new StreamWriter(path, true);
+            writer.WriteLine("\n\nNEW PARTICIPANT!!!! ****************************************\n");
+            foreach (MoveData item in movementData)
+            {
+                writer.WriteLine("Move number " + item.moveNumber + " at timestamp: " + item.timeSpentTotal +
+                    ";      Moved from (" + item.oldCoordinates.x + ", " + item.oldCoordinates.y + ") to (" + item.nextCoordinates.x + ", " + item.nextCoordinates.y +
+                    ");      Time spent at the location: " + item.timeSpentHere + "\n");
+            }
+
+            writer.Close();
+
+            if (File.Exists(path))
+            {
+                dataSavedUI.SetActive(true);
+                levelOneUI.SetActive(false);
+                // assign data as saved so no duplicates
+                isDataSaved = true;
+            }
+        }
+        //Debug.Log("movementData = " + jsonData);
     }
 }
