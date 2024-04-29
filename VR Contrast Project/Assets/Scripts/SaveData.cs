@@ -41,7 +41,7 @@ public class SaveData : MonoBehaviour
         // only save data if not yet saved
         if (!isDataSaved)
         {
-            string path = Application.persistentDataPath + "/researchData.txt";
+            string path = Application.persistentDataPath + "/researchData_v2.txt";
             StreamWriter writer = new StreamWriter(path, true);
             writer.WriteLine("\n\nNEW PARTICIPANT!!!! ****************************************\n");
             foreach (MoveData item in movementData)

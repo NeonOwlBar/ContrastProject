@@ -87,12 +87,12 @@ public class ChangeSkybox : MonoBehaviour
         pathUI = new List<GameObject> { pathNorth, pathEast, pathSouth, pathWest };
 
         // ensure start using correct skybox
-        switch ((int)levelNumber)
+        switch (levelNumber)
         {
-            case 0:
+            case LevelEnum.Tutorial:
                 SetLevelTutorial();
                 break;
-            case 1:
+            case LevelEnum.One:
                 SetLevelOne();
                 break;
         }
@@ -100,45 +100,13 @@ public class ChangeSkybox : MonoBehaviour
 
     private void Update()
     {
-        switch ((int)levelNumber)
+        switch (levelNumber)
         {
-            case 1:
+            case LevelEnum.One:
                 totalTimer += Time.deltaTime;
                 break;
         }
     }
-
-    //private void TutorialUpdate()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.E))
-    //    {
-    //        ChangeSkyboxTutorial(1);
-    //    }
-    //    else if (Input.GetKeyDown(KeyCode.Q))
-    //    {
-    //        ChangeSkyboxTutorial(-1);
-    //    }
-    //}
-
-    //private void LevelOneUpdate()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.X))
-    //    {
-    //        ChangeSkyboxLevelOne(1, 0);
-    //    }
-    //    else if (Input.GetKeyDown(KeyCode.C))
-    //    {
-    //        ChangeSkyboxLevelOne(-1, 0);
-    //    }
-    //    else if (Input.GetKeyDown(KeyCode.Y))
-    //    {
-    //        ChangeSkyboxLevelOne(0, 1);
-    //    }
-    //    else if (Input.GetKeyDown(KeyCode.I))
-    //    {
-    //        ChangeSkyboxLevelOne(0, -1);
-    //    }
-    //}
 
     // load next image
     public void ChangeSkyboxTutorial(int delta)

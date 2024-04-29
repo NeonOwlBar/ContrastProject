@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,8 +7,8 @@ public class AnimateHandOnInput : MonoBehaviour
     public InputActionProperty gripAnimationAction;
     public GameObject pokeObject;
     public Animator handAnimator;
-    private float prevTrigger;
-    private float prevGrip;
+    //private float prevTrigger;
+    //private float prevGrip;
 
     // used when allowing UI interaction on point animation only
     //private bool triggerChanged;
@@ -20,21 +18,21 @@ public class AnimateHandOnInput : MonoBehaviour
     void Update()
     {
         float triggerValue = pinchAnimationAction.action.ReadValue<float>();
-        if (triggerValue != prevTrigger)
-        {
+        //if (triggerValue != prevTrigger)
+        //{
             handAnimator.SetFloat("Trigger", triggerValue);
-            prevTrigger = triggerValue;
+            //prevTrigger = triggerValue;
             //triggerChanged = true;
-        }
+        //}
         //Debug.Log(triggerValue);
 
         float gripValue = gripAnimationAction.action.ReadValue<float>();
-        if (gripValue != prevGrip)
-        {
+        //if (gripValue != prevGrip)
+        //{
             handAnimator.SetFloat("Grip", gripValue);
-            prevGrip = gripValue;
+            //prevGrip = gripValue;
             //gripChanged = true;
-        }
+        //}
 
         // two separate statements so only reset when necessary
         //if (triggerChanged || gripChanged)

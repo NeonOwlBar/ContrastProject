@@ -4,19 +4,6 @@ using UnityEngine;
 
 public class ArrowCollider : MonoBehaviour
 {
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void ChangePosition(Vector3 newPos)
     {
         transform.position = newPos;
