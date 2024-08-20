@@ -48,7 +48,8 @@ public class TimerCountdown : MonoBehaviour
         // only used when timer is not needed in a level
         if (timeInSeconds == Mathf.Infinity)
         {
-            timerUI.text = "infi\nnity";
+            // display 5 minutes 0 seconds while not counting down
+            timerUI.text = string.Format("{0:00}\n{1:00}", 5f, 0f); ;
         }
         else
         {
