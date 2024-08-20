@@ -5,10 +5,22 @@ public class LevelController : MonoBehaviour
     public GameObject tutorialUI;
     public GameObject checkProceedUI;
     public GameObject levelOneUI;
+    // current coordinate and favourite button
+    public GameObject debugUI;
 
     public ChangeSkybox skybox;
 
     public SaveData saveData;
+
+    private void Awake()
+    {
+        // only shows debugging UI if in the editor
+#if UNITY_EDITOR
+        debugUI.SetActive(true);
+#else
+        debugUI.SetActive(false);
+#endif
+    }
 
     public void TutorialToProceed()
     {
