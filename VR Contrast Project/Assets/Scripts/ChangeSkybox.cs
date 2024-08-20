@@ -36,6 +36,8 @@ public class ChangeSkybox : MonoBehaviour
 
     // level one info
     [Header("Level One --------")]
+    [Header("Research Status")]
+    public bool isResearch = true;
     [Header("UI")]
     public GameObject levelOneHandUI;
     public TimerCountdown wristTimer;
@@ -50,13 +52,22 @@ public class ChangeSkybox : MonoBehaviour
     
     [Header("Top-Down Map")] // 2D array acts as top down grid of map
     public Material[,] levelOneImages = new Material[levelOneX, levelOneY];
-    [Header("Map columns")] // each one-dimensional array holds data for each column in 2D array
+    public Material[,] levelResearchImages = new Material[levelOneX, levelOneY];
+    [Header("Map columns (Grid)")] // each one-dimensional array holds data for each column in 2D array
     public Material[] levelOneXZeroImages = new Material[levelOneY];
     public Material[] levelOneXOneImages = new Material[levelOneY];
     public Material[] levelOneXTwoImages = new Material[levelOneY];
     public Material[] levelOneXThreeImages = new Material[levelOneY];
     public Material[] levelOneXFourImages = new Material[levelOneY];
     public Material[] levelOneXFiveImages = new Material[levelOneY];
+    [Header("Map columns (S-shape)")]
+    // setup for research with limited movement (S-shape)
+    public Material[] levelResearchXZeroImages = new Material[levelOneY];
+    public Material[] levelResearchXOneImages = new Material[levelOneY];
+    public Material[] levelResearchXTwoImages = new Material[levelOneY];
+    public Material[] levelResearchXThreeImages = new Material[levelOneY];
+    public Material[] levelResearchXFourImages = new Material[levelOneY];
+    public Material[] levelResearchXFiveImages = new Material[levelOneY];
     [Header("Path indicators")]
     public GameObject pathNorth;
     public GameObject buttonNorth;
@@ -229,13 +240,26 @@ public class ChangeSkybox : MonoBehaviour
         Material[] currentArray;
         // hold a reference to all arrays for use within nested loop below
         List<Material[]> arrays = new List<Material[]>();
-        // assigning values at initialisation did not work, therefore this is used
-        arrays.Add(levelOneXZeroImages);
-        arrays.Add(levelOneXOneImages);
-        arrays.Add(levelOneXTwoImages);
-        arrays.Add(levelOneXThreeImages);
-        arrays.Add(levelOneXFourImages);
-        arrays.Add(levelOneXFiveImages);
+        if (isResearch)
+        {
+            // assigning values at initialisation did not work, therefore this is used
+            arrays.Add(levelResearchXZeroImages);
+            arrays.Add(levelResearchXOneImages);
+            arrays.Add(levelResearchXTwoImages);
+            arrays.Add(levelResearchXThreeImages);
+            arrays.Add(levelResearchXFourImages);
+            arrays.Add(levelResearchXFiveImages);
+        }
+        else
+        {
+            // assigning values at initialisation did not work, therefore this is used
+            arrays.Add(levelOneXZeroImages);
+            arrays.Add(levelOneXOneImages);
+            arrays.Add(levelOneXTwoImages);
+            arrays.Add(levelOneXThreeImages);
+            arrays.Add(levelOneXFourImages);
+            arrays.Add(levelOneXFiveImages);
+        }
 
         for (int i = 0; i < levelOneX; i++)
         {
