@@ -1,6 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR;
 
 public class MovementInput : MonoBehaviour
@@ -17,6 +18,9 @@ public class MovementInput : MonoBehaviour
     public Transform cameraTransform;
     //used for setting arrow positions during development
     //bool triggerPressed = false;
+    public TextMeshProUGUI coordinatesUI;
+    public Image faveButtonImage;
+    public List<string> faveLocations = new();
 
 
     private void OnEnable()
@@ -135,6 +139,7 @@ public class MovementInput : MonoBehaviour
                 break;
             case ChangeSkybox.LevelEnum.One:
                 changeSky.ChangeSkyboxLevelOne(0, -1);
+                UpdateCoordinatesText();
                 break;
         }
     }
@@ -147,6 +152,7 @@ public class MovementInput : MonoBehaviour
                 break;
             case ChangeSkybox.LevelEnum.One:
                 changeSky.ChangeSkyboxLevelOne(1, 0);
+                UpdateCoordinatesText();
                 break;
         }
     }
@@ -155,9 +161,48 @@ public class MovementInput : MonoBehaviour
     public void OnPressC()    // south
     {
         changeSky.ChangeSkyboxLevelOne(0, 1);
+        UpdateCoordinatesText();
     }
     public void OnPressD()    // west
     {
         changeSky.ChangeSkyboxLevelOne(-1, 0);
+        UpdateCoordinatesText();
+    }
+
+    public void UpdateCoordinatesText()
+    {
+        string currentLoc = string.Format("{0}x{1}y", changeSky.xIndex, changeSky.yIndex);
+        coordinatesUI.text = currentLoc;
+        if (faveLocations.Contains(currentLoc))
+        {
+            faveButtonImage.color = Color.green;
+        }
+        else
+        {
+            faveButtonImage.color = Color.white;
+        }
+    }
+
+    public void OnPressFave()
+    {
+        // string to represent current location
+        string currentLoc = string.Format("{0}x{1}y", changeSky.xIndex, changeSky.yIndex);
+        // if current location is not in list of favourite locations,
+        // add it and set the colour of the button to green when at this location
+        if (!faveLocations.Contains(currentLoc))
+        {
+            faveLocations.Add(currentLoc);
+            Debug.Log($"Location {currentLoc} set as favourite");
+            faveButtonImage.color = Color.green;
+        }
+        else
+        {
+            // if successfully removed location from list, set colour of button back to whitec
+            if (faveLocations.Remove(currentLoc))
+            {
+                Debug.Log($"Location {currentLoc} removed as favourite");
+                faveButtonImage.color = Color.white;
+            }
+        }
     }
 }

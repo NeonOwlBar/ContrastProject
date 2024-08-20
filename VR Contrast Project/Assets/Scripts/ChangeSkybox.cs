@@ -1,8 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using UnityEngine.UIElements;
 
 /// <summary>
 /// Change the image for the skybox
@@ -41,6 +38,7 @@ public class ChangeSkybox : MonoBehaviour
     [Header("Level One --------")]
     [Header("UI")]
     public GameObject levelOneHandUI;
+    public TimerCountdown wristTimer;
     // holds current coordinate in each axis
     [Header("Co-ordinates")]
     public int xIndex = 0;
@@ -271,14 +269,18 @@ public class ChangeSkybox : MonoBehaviour
     public void SetLevelTutorial()
     {
         levelNumber = LevelEnum.Tutorial;
-        
+        // set skybox to use tutorial level skybox
         RenderSettings.skybox = tutorialImages[imgIndex];
         ChangeSkyboxTutorial(0);
-
+        // activate tutorial UI
         tutorialHandUI.SetActive(true);
+        // remove confirmation UI
         checkProceedUI.SetActive(false);
+        // remove level one UI
         levelOneHandUI.SetActive(false);
-
+        // reset wrist watch timer and stop it counting down
+        wristTimer.ResetTimer(false);
+        // activate path indicators for tutorial level
         foreach (ArrowCollider arrow in arrows) arrow.gameObject.SetActive(true);
         foreach (GameObject obj in pathUI) obj.SetActive(false);
     }
@@ -292,6 +294,8 @@ public class ChangeSkybox : MonoBehaviour
         tutorialHandUI.SetActive(false);
         // activate level one UI
         levelOneHandUI.SetActive(true);
+        // start timer countdown
+        wristTimer.ResetTimer(true);
         // remove all path indicators for tutorial level
         foreach (ArrowCollider arrow in arrows) arrow.gameObject.SetActive(false);
         
@@ -332,69 +336,6 @@ public class ChangeSkybox : MonoBehaviour
             else SetWestObjects(true);
         }
         else SetWestObjects(false);
-
-
-
-
-        //bool needsDiagonalToEast = (xIndex == 2 && yIndex == 4);
-        //bool needsDiagonalToWest = (xIndex == 3 && yIndex == 5);
-
-        //// north available
-        //if (yIndex - 1 >= 0)
-        //{
-        //    if (levelOneImages[xIndex, yIndex - 1] == null) SetNorthObjects(false);
-        //    else SetNorthObjects(true);
-        //}
-        //else SetNorthObjects(false);
-
-        //if (needsDiagonalToEast)
-        //{
-        //    // east available
-        //    if (xIndex + 1 < levelOneX)
-        //    {
-        //        if (levelOneImages[xIndex + 1, yIndex + 1] == null) SetEastObjects(false);
-        //        else SetEastObjects(true);
-        //    }
-        //    else SetEastObjects(false);
-        //}
-        //else
-        //{
-        //    // east available
-        //    if (xIndex + 1 < levelOneX)
-        //    {
-        //        if (levelOneImages[xIndex + 1, yIndex] == null) SetEastObjects(false);
-        //        else SetEastObjects(true);
-        //    }
-        //    else SetEastObjects(false);
-        //}
-        //// south available
-        //if (yIndex + 1 < levelOneY)
-        //{
-        //    if (levelOneImages[xIndex, yIndex + 1] == null) SetSouthObjects(false);
-        //    else SetSouthObjects(true);
-        //}
-        //else SetSouthObjects(false);
-
-        //if (needsDiagonalToWest)
-        //{
-        //    // west available
-        //    if (xIndex - 1 >= 0)
-        //    {
-        //        if (levelOneImages[xIndex - 1, yIndex - 1] == null) SetWestObjects(false);
-        //        else SetWestObjects(true);
-        //    }
-        //    else SetWestObjects(false);
-        //}
-        //else
-        //{
-        //    // west available
-        //    if (xIndex - 1 >= 0)
-        //    {
-        //        if (levelOneImages[xIndex - 1, yIndex] == null) SetWestObjects(false);
-        //        else SetWestObjects(true);
-        //    }
-        //    else SetWestObjects(false);
-        //}
     }
 
     // set path canvas and UI buttons to true or false

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 // for volume profile components
@@ -9,6 +7,7 @@ using UnityEngine.UI;
 public class ChangeContrast : MonoBehaviour
 {
     public Scrollbar scrollbar;
+    public Scrollbar LevelOneScrollbar;
 
     public Volume volume;
     // preset contrast levels from lowest to highest
@@ -20,8 +19,17 @@ public class ChangeContrast : MonoBehaviour
 
     public void SetContrast()
     {
-        // get current scrollbar value
-        float contrastValue = scrollbar.value;
+        float contrastValue;
+        if (scrollbar.isActiveAndEnabled)
+        {
+            // get current scrollbar value
+            contrastValue = scrollbar.value;
+        }
+        else
+        {
+            // get current scrollbar value
+            contrastValue = LevelOneScrollbar.value;
+        }
 
         // checking range in case of error in scroll bar
         // for value of 0
