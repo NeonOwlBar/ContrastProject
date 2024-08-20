@@ -9356,7 +9356,7 @@ MonoBehaviour:
   levelNumber: 0
   totalTimer: 0
   lastMoveTime: 0
-  totalMoves: 0
+  totalMoves: 1
   imgIndex: 0
   playerTransform: {fileID: 74272907}
   arrowForward: {fileID: 1346809077}

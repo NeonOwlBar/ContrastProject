@@ -10,7 +10,8 @@ public class ChangeSkybox : MonoBehaviour
     public LevelEnum levelNumber;
     public float totalTimer;
     public float lastMoveTime = 0f;
-    public int totalMoves = 0;
+    // start moves at one so first move is not move zero
+    public int totalMoves = 1;
 
     // tutorial level info
     [Header("Tutorial --------")]
