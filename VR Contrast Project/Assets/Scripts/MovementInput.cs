@@ -185,12 +185,24 @@ public class MovementInput : MonoBehaviour
 
     public void OnPressFave()
     {
+        // string to represent current location
         string currentLoc = string.Format("{0}x{1}y", changeSky.xIndex, changeSky.yIndex);
+        // if current location is not in list of favourite locations,
+        // add it and set the colour of the button to green when at this location
         if (!faveLocations.Contains(currentLoc))
         {
-            Debug.Log($"Location {currentLoc} set as favourite");
             faveLocations.Add(currentLoc);
+            Debug.Log($"Location {currentLoc} set as favourite");
             faveButtonImage.color = Color.green;
+        }
+        else
+        {
+            // if successfully removed location from list, set colour of button back to whitec
+            if (faveLocations.Remove(currentLoc))
+            {
+                Debug.Log($"Location {currentLoc} removed as favourite");
+                faveButtonImage.color = Color.white;
+            }
         }
     }
 }
